@@ -1,0 +1,7 @@
+g++ -c -std=c++11 -O3 main.cpp
+g++ -o logVS main.o -std=c++11 -O3
+Computing time=644353321 microseconds
+
+O3 openmp
+Computing time=556095006 microseconds
+Computing time=525781184 microseconds
