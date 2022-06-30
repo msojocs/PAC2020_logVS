@@ -1,5 +1,5 @@
 CC	= g++
-CFLAGS	= -std=c++11 -O3 -fopenmp -mavx2
+CFLAGS	= -std=c++11 -O3 -fopenmp -mavx2 -mfma
 
 all: logVS
 
