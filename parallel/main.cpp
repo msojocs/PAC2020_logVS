@@ -132,6 +132,7 @@ int main(int argc, char *argv[])
 		result[t] = logDataVSPrior(val, begin, end, res, disturb0, thread_num);
 	}
 
+// 单独花时间写文件
 #pragma unroll(32)
 	for (t = 0; t < K; t++)
 	{
