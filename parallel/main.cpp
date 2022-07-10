@@ -66,9 +66,20 @@ int main(int argc, char *argv[])
 	while (!fin.eof())
 	{
 		fin >> dat0 >> dat1 >> pri0 >> pri1 >> ctf0 >> sigRcp0;
-		if (!(i & 7))
-			j = (i << 2) + (i << 1) - 1; //chengyi 6
+		if (!(i & 7)) // i == 8   7的二进制0111
+		/*
+		a x 6
+		= a x 2 x (2 + 1)
+		= a x 2 x 2 + a x 2
+		*/
+			j = (i << 2) + (i << 1) - 1; // 乘以6 减1(下面有个j++)
+		
 		j++;
+
+		/*
+		为什么8个一组？
+		_mm256_load_ps 等函数是一次处理8个元素
+		*/
 		val[j] = pri0;
 		val[j + 8] = dat0;
 		val[j + 16] = pri1;
@@ -79,6 +90,7 @@ int main(int argc, char *argv[])
 		if (i == m) break;
 	}
 
+	// 多出来的给0
 	for (; i < MM; i++)
 	{
 		if (!(i & 7))
@@ -124,6 +136,7 @@ int main(int argc, char *argv[])
 		exit(1);
 	}
 
+	// 计算
 	unsigned INT t;
 	DOU_VEC  disturb0;
 	for (t = 0; t < K; t++)
@@ -171,6 +184,7 @@ DOU logDataVSPrior(const DOU*  val, const INT*  begin, const INT*  end, DOU_VEC*
 #pragma unroll(32)
 			for (i = i_begin; i < i_end; ++i)
 			{
+				// i x 32 + i x 16 = i x 48
 				register int index = (i << 5) + (i << 4);
 				// pri0
 				tmp1 = _mm256_load_ps(val + index);
