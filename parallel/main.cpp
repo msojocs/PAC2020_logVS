@@ -22,7 +22,7 @@ DOU logDataVSPrior(const DOU*  val, const INT*  begin, const INT*  end, DOU_VEC*
 int main(int argc, char *argv[])
 {
 	int length = m >> 3;//(m >> 4) + (((m & 15) + 15) >> 4);
-	register int thread_num = omp_get_num_procs()/2;
+	register int thread_num = omp_get_num_procs() - 1;
 
 	int MM = (length << 3);
 	//aligned_alloc(64,sizeof(DOU) * 6 * MM);
@@ -172,17 +172,23 @@ DOU logDataVSPrior(const DOU*  val, const INT*  begin, const INT*  end, DOU_VEC*
 			for (i = i_begin; i < i_end; ++i)
 			{
 				register int index = (i << 5) + (i << 4);
+				// pri0
 				tmp1 = _mm256_load_ps(val + index);
+				// dat0
 				tmp2 = _mm256_load_ps(val + index + 8);
+				// pri1
 				tmp3 = _mm256_load_ps(val + index + 16);
+				// dat1
 				tmp4 = _mm256_load_ps(val + index + 24);
+				// sig
 				tmp5 = _mm256_load_ps(val + index + 32);
+				// ctf
 				tmp6 = _mm256_load_ps(val + index + 40);
-				tmp0 = _mm256_mul_ps(tmp6, tmp);
-				ans1 = _mm256_fnmadd_ps(tmp1, tmp0, tmp2);
-				ans2 = _mm256_fnmadd_ps(tmp3, tmp0, tmp4);
+				tmp0 = _mm256_mul_ps(tmp5, tmp);
+				ans1 = _mm256_fnmadd_ps(tmp1, tmp6, tmp2);
+				ans2 = _mm256_fnmadd_ps(tmp3, tmp6, tmp4);
 				ans3 = _mm256_fmadd_ps(ans1, ans1, _mm256_mul_ps(ans2, ans2));
-				res1 = _mm256_fmadd_ps(ans3, tmp5, res1);
+				res1 = _mm256_fmadd_ps(ans3, tmp0, res1);
 			}
 			*(res + j) = res1;
 		}
